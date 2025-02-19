@@ -1,4 +1,4 @@
-package com.ticket.reservation.utils;
+package com.ticket.utils;
 
 import java.util.Random;
 

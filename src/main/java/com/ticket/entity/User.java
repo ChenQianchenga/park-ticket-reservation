@@ -1,4 +1,4 @@
-package com.ticket.reservation.entity;
+package com.ticket.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

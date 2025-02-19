@@ -1,10 +1,12 @@
-package com.ticket.reservation.controller.user;
+package com.ticket.controller.user;
 
-import com.ticket.reservation.dto.UserDto;
-import com.ticket.reservation.result.R;
-import com.ticket.reservation.utils.ValidateCodeUtils;
+import com.ticket.dto.UserDto;
+import com.ticket.result.R;
+import com.ticket.service.UserService;
+import com.ticket.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +19,13 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/sendMsg")
-    public R<String> sendMsg(@RequestBody UserDto user, HttpSession session) {
+    public R<String> sendMsg(@RequestBody UserDto userDto, HttpSession session) {
         //获取手机号
-        String phone = user.getPhone();
+        String phone = userDto.getPhone();
         if (StringUtils.isNotEmpty(phone)) {
             //生成随机的4位验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
@@ -33,11 +38,24 @@ public class UserController {
         }
         return R.error("短信发送失败");
     }
+
     // 创建新用户
     @PostMapping
-    public String createUser(@RequestBody UserDto user) {
-        log.info("Creating new user: {}", user);
-        // 这里可以处理创建用户的逻辑
-        return "User created: " + user;
+    public R<String> add(@RequestBody UserDto userDto, HttpSession session) {
+        log.info("Creating new user: {}", userDto);
+
+        //获取手机号
+        String phone = userDto.getPhone();
+        //获取验证码
+        String code = userDto.getCode();
+        //从Session中获取保存的验证码
+        Object codeInSession = session.getAttribute(phone);
+        //进行验证码对比
+        if (codeInSession != null && codeInSession.equals(code)) {
+            //对比成功开始注册用户
+            userService.save(userDto);
+
+        }
+        return R.success();
     }
 }

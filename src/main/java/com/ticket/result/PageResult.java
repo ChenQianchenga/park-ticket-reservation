@@ -1,4 +1,4 @@
-package com.ticket.reservation.result;
+package com.ticket.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
