@@ -2,6 +2,7 @@ package com.ticket.service.Impl;
 
 import com.ticket.dto.UserDto;
 import com.ticket.entity.User;
+import com.ticket.exception.CustomException;
 import com.ticket.mapper.UserMapper;
 import com.ticket.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -32,5 +33,26 @@ public class UserServiceImpl implements UserService {
         userMapper.save(user);
 
 
+    }
+
+    @Override
+    public User login(UserDto userDto) {
+        String phone = userDto.getPhone();
+        String username = userDto.getUsername();
+        String password = userDto.getPassword();
+        //调用数据库查询当前用户信息
+        User user = userMapper.getByPhone(phone);
+        //用户不存在
+        if (user == null){
+            //抛出自定义的异常
+            throw new CustomException("用户不存在");
+        }
+        //密码错误
+        String pwd = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (!pwd.equals(user.getPassword())){
+            //抛出密码错误异常
+            throw new CustomException("密码错误");
+        }
+        return user;
     }
 }

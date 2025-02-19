@@ -6,11 +6,11 @@
 <mapper namespace="com.ticket.mapper.UserMapper">
     <!--员工登录 XML映射文件中sql语句的id与Mapper接口中的方法名一致，并保持返回类型一致-->
     <!--resultType属性，指的是查询返回的单条记录所封装的类型。-->
-<!--    <select id="getByUsername" resultType="com.ticket.reservation.entity.User">-->
-<!--        select *-->
-<!--        from employee-->
-<!--        where username = #{username}-->
-<!--    </select>-->
+    <select id="getByPhone" resultType="com.ticket.entity.User">
+        select *
+        from user
+        where phone = #{phone}
+    </select>
 
     <!--添加用户-->
     <insert id="save">

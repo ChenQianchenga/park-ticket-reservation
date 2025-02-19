@@ -1,9 +1,14 @@
 package com.ticket.controller.user;
 
+import com.ticket.constant.JwtClaimsConstant;
+import com.ticket.properties.JwtProperties;
 import com.ticket.dto.UserDto;
+import com.ticket.entity.User;
 import com.ticket.result.R;
 import com.ticket.service.UserService;
+import com.ticket.utils.JwtUtil;
 import com.ticket.utils.ValidateCodeUtils;
+import com.ticket.vo.UserLoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/user")
@@ -21,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtProperties jwtProperties; //jwt令牌相关配置类
 
     @PostMapping("/sendMsg")
     public R<String> sendMsg(@RequestBody UserDto userDto, HttpSession session) {
@@ -57,5 +66,33 @@ public class UserController {
 
         }
         return R.success();
+    }
+
+    @PostMapping("login")
+    public R<UserLoginVo> login(@RequestBody UserDto userDto) {
+        log.info("用户登录：用户名：{}，密码：{}", userDto.getPhone(), userDto.getPassword());
+        //调用业务登陆返回对象
+        User userLogin = userService.login(userDto);
+        //设置jwt中有效载荷部分的数据，通常是用户的身份标识
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.USER_ID, userLogin.getId());
+
+        //创建jwt令牌
+        String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(), jwtProperties.getAdminTtl(), claims);
+        //封装响应对象
+        UserLoginVo userLoginVo = UserLoginVo.builder()
+                .id(userLogin.getId())
+                .userName(userLogin.getUsername())
+                .phone(userLogin.getPhone())
+                .token(token)
+                .build();
+        log.info("登录成功返回的用户信息:"+userLoginVo);
+        return R.success(userLoginVo);
+    }
+
+    @PostMapping("/logout")
+    public R<String> logout() {
+        log.info("用户退出");
+        return R.success("退出登录");
     }
 }
