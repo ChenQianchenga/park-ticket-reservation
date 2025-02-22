@@ -19,19 +19,23 @@
     </insert>
 
     <!--员工分页查询-->
-<!--    <select id="PageQuery" resultType="com.reggie.entity.Employee">-->
-<!--        select * from employee-->
-<!--        <where>-->
-<!--            <if test="name != null and name != ''">-->
-<!--                name LIKE CONCAT('%', #{name}, '%')-->
-<!--                &lt;!&ndash;                name like "%"#{name}"%"&ndash;&gt;-->
-<!--            </if>-->
-<!--        </where>-->
-<!--        order by create_time desc-->
-<!--    </select>-->
+    <select id="PageQuery" resultType="com.ticket.entity.User">
+        select * from user
+        <where>
+            <if test="username != null and username != ''">
+                username LIKE CONCAT('%', #{username}, '%')
+                <!--                name like "%"#{name}"%"-->
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getAllUsers" resultType="com.ticket.entity.User">
+        SELECT id, username,  phone, create_time, update_time FROM user
+    </select>
 
 
-<!--    &lt;!&ndash;员工状态修改&ndash;&gt;-->
+    <!--    &lt;!&ndash;员工状态修改&ndash;&gt;-->
 <!--    <update id="updateStatusById">-->
 <!--        update employee-->
 <!--        set status      = #{status},-->

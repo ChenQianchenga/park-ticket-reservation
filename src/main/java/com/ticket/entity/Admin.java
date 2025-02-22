@@ -1,4 +1,4 @@
-package com.ticket.vo;
+package com.ticket.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,18 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginVo implements Serializable {
-    //主键
+public class Admin implements Serializable {
     private Long id;
-    //用户名
     private String username;
-    //手机号
-    private String phone;
-    //token
-    private String authentication;
-
+    private String password;
+    private String role;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }

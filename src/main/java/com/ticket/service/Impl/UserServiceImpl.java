@@ -1,16 +1,31 @@
 package com.ticket.service.Impl;
 
-import com.ticket.dto.UserDto;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.opencsv.CSVWriter;
+import com.ticket.dto.UserDTO;
+import com.ticket.dto.UserPageQueryDTO;
 import com.ticket.entity.User;
 import com.ticket.exception.CustomException;
 import com.ticket.mapper.UserMapper;
+import com.ticket.result.PageResult;
 import com.ticket.service.UserService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     //用户注册
-    public void save(UserDto userDto) {
+    public void save(UserDTO userDto) {
         User user = new User();
         //对象的拷贝
         BeanUtils.copyProperties(userDto,user);
@@ -36,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(UserDto userDto) {
+    public User login(UserDTO userDto) {
         String phone = userDto.getPhone();
         String username = userDto.getUsername();
         String password = userDto.getPassword();
@@ -55,4 +70,65 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+
+    public PageResult PageQuery(UserPageQueryDTO userPageQueryDTO) {
+        PageHelper.startPage(userPageQueryDTO.getPageNum(),userPageQueryDTO.getPageSize());
+        Page<User> page = userMapper.PageQuery(userPageQueryDTO);
+        PageResult pageResult = new PageResult(page.getTotal(),page.getResult());
+        return pageResult;
+    }
+
+    public List<User> getAllUsers() {
+        return userMapper.getAllUsers();
+    }
+
+    @Override
+    public ByteArrayOutputStream generateUserExcel() throws IOException {
+        List<User> users = userMapper.getAllUsers();
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Users");
+
+        // 创建表头
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"ID", "Username", "Phone", "创建时间", "更新时间"};
+        for (int i = 0; i < headers.length; i++) {
+            headerRow.createCell(i).setCellValue(headers[i]);
+        }
+
+        // 填充数据
+        int rowNum = 1;
+        for (User user : users) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(user.getId());
+            row.createCell(1).setCellValue(user.getUsername());
+            row.createCell(2).setCellValue(user.getPhone());
+            row.createCell(3).setCellValue(user.getCreateTime().toString());
+            row.createCell(4).setCellValue(user.getUpdateTime().toString());
+        }
+
+        // 将工作簿写入字节输出流
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        workbook.write(byteArrayOutputStream);
+        workbook.close();
+
+        return byteArrayOutputStream;
+    }
+
+    public ByteArrayInputStream writeDataToCSV(List<String[]> data) throws IOException {
+        // 使用ByteArrayOutputStream将CSV写入内存
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(byteArrayOutputStream, StandardCharsets.UTF_8)) {
+            // 写入BOM头，确保Excel可以识别UTF-8编码
+            byteArrayOutputStream.write(0xEF);
+            byteArrayOutputStream.write(0xBB);
+            byteArrayOutputStream.write(0xBF);
+            // 使用CSVWriter写入数据
+            CSVWriter csvWriter = new CSVWriter(writer);
+            csvWriter.writeAll(data);
+            csvWriter.close();
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+    }
+
 }

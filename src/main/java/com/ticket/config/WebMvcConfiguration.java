@@ -26,11 +26,11 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     private JwtTokenUserInterceptor jwtTokenUserInterceptor;
 
     @Override
-    protected void addInterceptors(InterceptorRegistry registry){
+    protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenAdminInterceptor) //那个拦截器
                 .addPathPatterns("/admin/**") // 拦截器拦截的资源
-                .excludePathPatterns("/admin/login", "/admin/logout"); //那些路径不拦截
+                .excludePathPatterns("/admin/login", "/admin/logout", "/admin/export"); //那些路径不拦截
 
         registry.addInterceptor(jwtTokenUserInterceptor)
                 .addPathPatterns("/user/**")
@@ -39,6 +39,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     /*
     Spring MVC 中自定义消息转换器，并扩展现有的消息转换器列表。自定义的消息转换器主要是用来将 Java 对象转换为 JSON 格式，或者反之。
      */
+
     /**
      * 扩展spring MVC的消息转换器
      *

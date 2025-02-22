@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--XML映射文件的namespace属性为Mapper接口全限定名一致-->
+<mapper namespace="com.ticket.mapper.AnnouncementMapper">
+    <!--公告分页查询-->
+    <select id="PageQuery" resultType="com.ticket.entity.Announcement">
+        select * from park_announcements
+        <where>
+            <if test="title != null and title != ''">
+                title LIKE CONCAT('%', #{title}, '%')
+                <!--                name like "%"#{name}"%"-->
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </where>
+        order by publish_time desc
+    </select>
+
+    <!--添加公告-->
+    <insert id="add" parameterType="com.ticket.entity.Announcement">
+        insert into park_announcements(title, content, publisher, publish_time, expiry_time, status,create_time, update_time)
+        values (#{title}, #{content}, #{publisher}, #{publishTime}, #{expiryTime}, #{status},#{createTime}, #{updateTime})
+    </insert>
+
+    <!--公告状态修改-->
+    <update id="updateStatusById">
+        update park_announcements
+        set status      = #{status},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from park_announcements
+        where id = #{id}
+    </delete>
+
+    <update id="update">
+        update park_announcements
+        <set>
+            <if test="title != null">
+                title =#{title},
+            </if>
+            <if test="content != null and content !=''">
+                content = #{content},
+            </if>
+            <if test="publisher != null">
+                publisher = #{publisher},
+            </if>
+            <if test="publishTime != null">
+                publishTime = #{publishTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

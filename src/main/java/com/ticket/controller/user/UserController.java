@@ -2,7 +2,7 @@ package com.ticket.controller.user;
 
 import com.ticket.constant.JwtClaimsConstant;
 import com.ticket.properties.JwtProperties;
-import com.ticket.dto.UserDto;
+import com.ticket.dto.UserDTO;
 import com.ticket.entity.User;
 import com.ticket.result.R;
 import com.ticket.service.UserService;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
-@RestController
+@RestController("userUserController")
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
@@ -32,7 +32,7 @@ public class UserController {
     private JwtProperties jwtProperties; //jwt令牌相关配置类
 
     @PostMapping("/sendMsg")
-    public R<String> sendMsg(@RequestBody UserDto userDto, HttpSession session) {
+    public R<String> sendMsg(@RequestBody UserDTO userDto, HttpSession session) {
         //获取手机号
         String phone = userDto.getPhone();
         if (StringUtils.isNotEmpty(phone)) {
@@ -50,7 +50,7 @@ public class UserController {
 
     // 创建新用户
     @PostMapping
-    public R<String> add(@RequestBody UserDto userDto, HttpSession session) {
+    public R<String> add(@RequestBody UserDTO userDto, HttpSession session) {
         log.info("Creating new user: {}", userDto);
 
         //获取手机号
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public R<UserLoginVo> login(@RequestBody UserDto userDto) {
+    public R<UserLoginVo> login(@RequestBody UserDTO userDto) {
         log.info("用户登录：用户名：{}，密码：{}", userDto.getPhone(), userDto.getPassword());
         //调用业务登陆返回对象
         User userLogin = userService.login(userDto);
@@ -78,13 +78,13 @@ public class UserController {
         claims.put(JwtClaimsConstant.USER_ID, userLogin.getId());
 
         //创建jwt令牌
-        String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(), jwtProperties.getAdminTtl(), claims);
+        String authentication = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
         //封装响应对象
         UserLoginVo userLoginVo = UserLoginVo.builder()
                 .id(userLogin.getId())
-                .userName(userLogin.getUsername())
+                .username(userLogin.getUsername())
                 .phone(userLogin.getPhone())
-                .token(token)
+                .authentication(authentication)
                 .build();
         log.info("登录成功返回的用户信息:"+userLoginVo);
         return R.success(userLoginVo);
