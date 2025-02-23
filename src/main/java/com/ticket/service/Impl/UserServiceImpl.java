@@ -82,38 +82,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.getAllUsers();
     }
 
-    @Override
-    public ByteArrayOutputStream generateUserExcel() throws IOException {
-        List<User> users = userMapper.getAllUsers();
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Users");
-
-        // 创建表头
-        Row headerRow = sheet.createRow(0);
-        String[] headers = {"ID", "Username", "Phone", "创建时间", "更新时间"};
-        for (int i = 0; i < headers.length; i++) {
-            headerRow.createCell(i).setCellValue(headers[i]);
-        }
-
-        // 填充数据
-        int rowNum = 1;
-        for (User user : users) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(user.getId());
-            row.createCell(1).setCellValue(user.getUsername());
-            row.createCell(2).setCellValue(user.getPhone());
-            row.createCell(3).setCellValue(user.getCreateTime().toString());
-            row.createCell(4).setCellValue(user.getUpdateTime().toString());
-        }
-
-        // 将工作簿写入字节输出流
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        workbook.write(byteArrayOutputStream);
-        workbook.close();
-
-        return byteArrayOutputStream;
-    }
-
     public ByteArrayInputStream writeDataToCSV(List<String[]> data) throws IOException {
         // 使用ByteArrayOutputStream将CSV写入内存
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

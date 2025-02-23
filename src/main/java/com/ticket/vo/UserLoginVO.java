@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginVo implements Serializable {
+public class UserLoginVO implements Serializable {
     //主键
     private Long id;
     //用户名

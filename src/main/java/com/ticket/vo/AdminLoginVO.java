@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminLoginVo {
+public class AdminLoginVO {
     private Long id;
     private String username;
     private String password;

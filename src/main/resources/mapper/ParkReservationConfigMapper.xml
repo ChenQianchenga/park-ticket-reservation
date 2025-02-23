@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--XML映射文件的namespace属性为Mapper接口全限定名一致-->
+<mapper namespace="com.ticket.mapper.ParkReservationConfigMapper">
+
+    <resultMap id="ParkReservationConfigMap" type="com.ticket.vo.ParkReservationConfigVO" autoMapping="true">
+        <id property="id" column="park_config_id"/>
+        <result property="parkName" column="park_name"/>
+        <result property="openTime" column="open_time"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="dailyLimit" column="daily_limit"/>
+        <result property="maxAdvanceDays" column="max_advance_days"/>
+        <collection property="openingPeriods" ofType="com.ticket.entity.ParkOpeningPeriod">
+            <result property="id" column="period_id"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+        </collection>
+    </resultMap>
+
+    <select id="getConfigWithPeriods" resultMap="ParkReservationConfigMap">
+        select prc.id as park_config_id, prc.park_name, prc.open_time, prc.close_time, prc.daily_limit, prc.max_advance_days,
+        pop.id as period_id, pop.start_time, pop.end_time
+        from park_reservation_config prc
+        left join park_opening_periods pop on prc.id = pop.park_config_id
+        where prc.id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="com.ticket.entity.ParkReservationConfig">
+        UPDATE park_reservation_config
+        <set>
+            <if test="parkName != null">park_name = #{parkName},</if>
+            <if test="openTime != null">open_time = #{openTime},</if>
+            <if test="closeTime != null">close_time = #{closeTime},</if>
+            <if test="dailyLimit != null">daily_limit = #{dailyLimit},</if>
+            <if test="maxAdvanceDays != null">max_advance_days = #{maxAdvanceDays},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

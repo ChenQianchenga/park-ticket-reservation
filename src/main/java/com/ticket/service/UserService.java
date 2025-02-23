@@ -25,7 +25,5 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    ByteArrayOutputStream generateUserExcel() throws IOException;
-
     ByteArrayInputStream writeDataToCSV(List<String[]> data) throws IOException;
 }

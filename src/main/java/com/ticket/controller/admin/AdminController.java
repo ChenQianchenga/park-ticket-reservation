@@ -7,7 +7,7 @@ import com.ticket.properties.JwtProperties;
 import com.ticket.result.R;
 import com.ticket.service.AdminService;
 import com.ticket.utils.JwtUtil;
-import com.ticket.vo.AdminLoginVo;
+import com.ticket.vo.AdminLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class AdminController {
     private JwtProperties jwtProperties; //jwt令牌相关配置类
 
     @PostMapping("/login")
-    public R<AdminLoginVo> login(@RequestBody AdminDTO adminDto) {
+    public R<AdminLoginVO> login(@RequestBody AdminDTO adminDto) {
         log.info("管理员登陆：用户名：{}，密码：{}", adminDto.getUsername(), adminDto.getPassword());
         //调用业务登陆返回对象
         Admin adminLogin = adminService.login(adminDto);
@@ -36,7 +36,7 @@ public class AdminController {
         //创建jwt令牌
         String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(), jwtProperties.getAdminTtl(), claims);
         //封装响应对象
-        AdminLoginVo adminLoginVo = AdminLoginVo.builder()
+        AdminLoginVO adminLoginVo = AdminLoginVO.builder()
                 .id(adminLogin.getId())
                 .username(adminLogin.getUsername())
                 .password(adminLogin.getPassword())

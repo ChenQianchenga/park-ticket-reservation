@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--XML映射文件的namespace属性为Mapper接口全限定名一致-->
+<mapper namespace="com.ticket.mapper.ParkOpeningPeriodMapper">
+
+    <delete id="deleteByParkConfigId" parameterType="Long">
+        DELETE FROM park_opening_periods
+        WHERE park_config_id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.ticket.entity.ParkOpeningPeriod">
+        INSERT INTO park_opening_periods (park_config_id, start_time, end_time)
+        VALUES (#{parkConfigId}, #{startTime}, #{endTime})
+    </insert>
+</mapper>

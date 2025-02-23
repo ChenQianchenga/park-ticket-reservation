@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/user")
 @Slf4j
 public class UserController {
     @Autowired
@@ -48,7 +46,7 @@ public class UserController {
                 .collect(Collectors.toList());
 
         // 设置表头
-        data.add(0, new String[]{"ID", "Name", "手机号","注册时间"});
+        data.add(0, new String[]{"ID", "姓名", "手机号","注册时间"});
 
         // 将数据写入到内存中的字节流
         ByteArrayInputStream byteArrayInputStream = userService.writeDataToCSV(data);

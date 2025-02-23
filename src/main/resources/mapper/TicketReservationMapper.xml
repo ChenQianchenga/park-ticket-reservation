@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--XML映射文件的namespace属性为Mapper接口全限定名一致-->
+<mapper namespace="com.ticket.mapper.TicketReservationMapper">
+
+
+
+    <select id="countByDate" resultType="java.lang.Integer">
+        select count(reservation_id) from ticket_reservation
+        where visit_date=#{visitDate}
+    </select>
+
+    <insert id="save" parameterType="com.ticket.entity.TicketReservation">
+        INSERT INTO ticket_reservation (
+        user_id,
+        visit_date,
+        visit_time,
+        ticket_type,
+        visitor_name,
+        identity_card_number,
+        phone_number,
+        payment_amount,
+        status,
+        create_time,
+        update_time
+        )
+        VALUES (
+        #{userId},
+        #{visitDate},
+        #{visitTime},
+        #{ticketType},
+        #{visitorName},
+        #{identityCardNumber},
+        #{phoneNumber},
+        #{paymentAmount},
+        #{status},
+        #{createTime},
+        #{updateTime}
+        )
+    </insert>
+
+    <select id="PageQuery" resultType="com.ticket.entity.TicketReservation">
+        select * from ticket_reservation
+        <where>
+            <if test="userId !=null">
+                user_id = #{userId}
+            </if>
+            <if test="phoneNumber !=null">
+                and phone_number=#{phoneNumber}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <delete id="deleteById">
+        delete
+        from ticket_reservation
+        where reservation_id = #{id}
+    </delete>
+
+    <update id="update">
+        update ticket_reservation
+        set status=#{status}
+        where reservation_id=#{reservationId}
+    </update>
+</mapper>

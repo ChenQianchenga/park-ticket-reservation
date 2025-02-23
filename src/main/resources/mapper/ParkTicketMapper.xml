@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--XML映射文件的namespace属性为Mapper接口全限定名一致-->
+<mapper namespace="com.ticket.mapper.ParkTicketMapper">
+<!--    <select id="getByUsername" resultType="com.ticket.entity.Admin">-->
+<!--        select *-->
+<!--        from admin-->
+<!--        where username = #{username}-->
+<!--    </select>-->
+
+
+    <insert id="insert" parameterType="com.ticket.entity.ParkTicket">
+        INSERT INTO park_tickets (
+        ticket_type,
+        price,
+        available_stock,
+        start_date,
+        end_date,
+        status,
+        create_time,
+        update_time
+        )
+        VALUES (
+        #{ticketType},
+        #{price},
+        #{availableStock},
+        #{startDate},
+        #{endDate},
+        #{status},
+        #{createTime},
+        #{updateTime}
+        )
+    </insert>
+
+    <!--门票分页查询-->
+    <select id="pageQuery" resultType="com.ticket.entity.ParkTicket">
+        select * from park_tickets
+        <where>
+            <if test="ticketType != null and ticketType != ''">
+                ticket_type LIKE CONCAT('%', #{ticketType}, '%')
+                <!--                name like "%"#{name}"%"-->
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!--公告状态修改-->
+    <update id="updateStatusById">
+        update park_tickets
+        set status      = #{status},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from park_tickets
+        where id = #{id}
+    </delete>
+
+    <update id="update">
+        update park_tickets
+        <set>
+            <if test="ticketType != null">
+                ticket_type =#{ticketType},
+            </if>
+            <if test="price != null and price !=''">
+                price = #{price},
+            </if>
+            <if test="availableStock != null">
+                available_stock = #{availableStock},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectAllTickets" resultType="com.ticket.entity.ParkTicket">
+        SELECT id, ticket_type, price, available_stock, start_date, end_date, status, create_time, update_time
+        FROM park_tickets
+    </select>
+
+    <select id="getByType" resultType="com.ticket.entity.ParkTicket">
+        select * from park_tickets
+        where ticket_type = #{ticketType}
+    </select>
+</mapper>

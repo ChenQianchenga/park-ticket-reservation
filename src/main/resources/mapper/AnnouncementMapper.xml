@@ -13,7 +13,7 @@
                 <!--                name like "%"#{name}"%"-->
             </if>
             <if test="status != null">
-                status = #{status}
+                and status = #{status}
             </if>
         </where>
         order by publish_time desc

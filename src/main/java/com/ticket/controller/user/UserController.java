@@ -8,7 +8,7 @@ import com.ticket.result.R;
 import com.ticket.service.UserService;
 import com.ticket.utils.JwtUtil;
 import com.ticket.utils.ValidateCodeUtils;
-import com.ticket.vo.UserLoginVo;
+import com.ticket.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public R<UserLoginVo> login(@RequestBody UserDTO userDto) {
+    public R<UserLoginVO> login(@RequestBody UserDTO userDto) {
         log.info("用户登录：用户名：{}，密码：{}", userDto.getPhone(), userDto.getPassword());
         //调用业务登陆返回对象
         User userLogin = userService.login(userDto);
@@ -80,7 +80,7 @@ public class UserController {
         //创建jwt令牌
         String authentication = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
         //封装响应对象
-        UserLoginVo userLoginVo = UserLoginVo.builder()
+        UserLoginVO userLoginVo = UserLoginVO.builder()
                 .id(userLogin.getId())
                 .username(userLogin.getUsername())
                 .phone(userLogin.getPhone())

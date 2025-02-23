@@ -23,6 +23,7 @@ public class AnnouncementController {
     @GetMapping("/page")
     public R<PageResult> PageQuery(AnnouncementPageQueryDTO announcementDto) {
         log.info("查询公告：{}",announcementDto);
+        announcementDto.setStatus(1);
         PageResult pageResult = announcementService.PageQuery(announcementDto);
         return R.success(pageResult);
     }
